@@ -54,9 +54,6 @@ const Dashboard = () => {
         </button>
       </header>
       <nav className="mb-4">
-        <Link className="btn btn-link" to="/peliculasApi">
-          Api de Películas
-        </Link>
         <Link className="btn btn-link" to="/">
           Home
         </Link>
@@ -65,6 +62,12 @@ const Dashboard = () => {
         </Link>
         <Link className="btn btn-link" to="/tareas/nueva">
           Nueva tarea
+        </Link>
+        <Link className="btn btn-link" to="/peliculasApi">
+          Api de Películas
+        </Link>
+        <Link className="btn btn-link" to="/iaSinopsis">
+          IA Generadora de Sinopsis
         </Link>
       </nav>
       <main>

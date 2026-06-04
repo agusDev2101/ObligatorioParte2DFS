@@ -124,7 +124,7 @@ export const LoginApi = async (email, password) => {
 
 export const RegisterApi = async (username, email, password, role = "reviewer") => {
   try {
-    const response = await axios.post(
+    const response = await api.post(
       `${URL_BASE}/auth/register`,
       {
         username,
@@ -151,10 +151,30 @@ export const buscarPeliculasApi = async (text) => {
         `/movies/search?query=${encodeURIComponent(text)}`
     );
 
-    const data = response?.data;
-    if (Array.isArray(data)) {
-        return data;
-    }
+    const data = response.data;
+    
+    return data;
 
     return data?.results || data?.movies || data?.data || [];
 };
+
+export const generarSinopsisApi = async (text) => {
+  try {
+    const response = await api.post(
+            `/ia/transform`,
+      {
+        text
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    return response.data?.data;
+  } catch (error) {
+    console.error("Generate synopsis error:", error.response?.data || error.message);
+    throw error;
+  }
+}
