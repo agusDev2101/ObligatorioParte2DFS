@@ -56,7 +56,7 @@ const BusquedaPeliculas = () => {
 
         <div className="container py-4">
             <header className="d-flex justify-content-between align-items-center mb-4">
-                <h1 className="h3">MyApp</h1>
+                <h1 className="h3">PelisApp</h1>
                 <button className="btn btn-outline-danger" onClick={handleLogout}>
                     Logout
                 </button>
@@ -72,7 +72,7 @@ const BusquedaPeliculas = () => {
                     />
                 </div>
                 <div className="col-12 col-md-3 d-grid">
-                    <button className="btn btn-primary" type="submit" disabled={buscando}>
+                    <button className="nav-item-modern" type="submit" disabled={buscando}>
                         {buscando ? "Buscando..." : "Buscar"}
                     </button>
                 </div>

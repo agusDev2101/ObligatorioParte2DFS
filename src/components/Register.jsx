@@ -54,11 +54,8 @@ const Register = () => {
     <main className="login-page">
       <section className="login-layout">
         <div className="login-copy">
-          <span className="login-tag">Movie Hub</span>
           <h1>Crea tu cuenta y empezá a usar la app.</h1>
-          <p>
-            Registro con validación, confirmación de contraseña y auto-login si el backend devuelve token.
-          </p>
+          <p>Creá tu perfil cinéfilo y accedé a un espacio diseñado para hacer un seguimiento de lo que ya viste, descubrir nuevos lanzamientos y disfrutar del mejor cine.</p>
         </div>
 
         <Card className="login-card">
@@ -143,8 +140,15 @@ const Register = () => {
                     Crear cuenta
                   </Button>
 
-                  <p className="login-switch">
-                    ¿Ya tenés cuenta? <Link to="/login">Ingresá</Link>
+                   <p className="login-switch" style={{ marginTop: 12 }}>
+                    ¿Ya tenés cuenta?{' '}
+                    <button
+                      type="button"
+                      className="link-button"
+                      onClick={() => navigate('/login')}
+                    >
+                      Ingresá
+                    </button>
                   </p>
                 </FormikForm>
               )}

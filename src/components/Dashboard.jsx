@@ -48,27 +48,51 @@ const Dashboard = () => {
   return (
     <div className="container py-4">
       <header className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3">MyApp</h1>
+        <h1 className="h3">PelisApp</h1>
         <button className="btn btn-outline-danger" onClick={handleLogout}>
           Logout
         </button>
       </header>
       <nav className="mb-4">
-        <Link className="btn btn-link" to="/">
+        <button
+          type="button"
+          className="nav-item-modern"
+          onClick={() => navigate('/')}
+        >
           Home
-        </Link>
-        <Link className="btn btn-link" to="/tareas">
+        </button>
+
+        <button
+          type="button"
+          className="nav-item-modern"
+          onClick={() => navigate('/tareas')}
+        >
           Tareas
-        </Link>
-        <Link className="btn btn-link" to="/tareas/nueva">
+        </button>
+
+        <button
+          type="button"
+          className="nav-item-modern"
+          onClick={() => navigate('/tareas/nueva')}
+        >
           Nueva tarea
-        </Link>
-        <Link className="btn btn-link" to="/peliculasApi">
+        </button>
+
+        <button
+          type="button"
+          className="nav-item-modern"
+          onClick={() => navigate('/peliculasApi')}
+        >
           Api de Películas
-        </Link>
-        <Link className="btn btn-link" to="/iaSinopsis">
+        </button>
+
+        <button
+          type="button"
+          className="nav-item-modern"
+          onClick={() => navigate('/iaSinopsis')}
+        >
           IA Generadora de Sinopsis
-        </Link>
+        </button>
       </nav>
       <main>
         <Outlet />

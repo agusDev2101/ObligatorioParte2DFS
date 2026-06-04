@@ -36,8 +36,8 @@ const Login2 = () => {
       await new Promise((resolve) => setTimeout(resolve, 3000));
       const token = await LoginApi(values.email, values.password);
       console.log("token", token);
-      localStorage.setItem("token", token); // Guarda el token en localStorage
-      navigate("/"); // Redirige al dashboard después del login exitoso
+      localStorage.setItem("token", token);
+      navigate("/");
     } catch (error) {
       alert(getLoginErrorMessage(error));
     } finally {
@@ -46,56 +46,79 @@ const Login2 = () => {
   };
 
   return (
-    <Card style={{ width: "18rem" }}>
-      <Card.Body>
-        <Formik
-          initialValues={{ email: "", password: "" }}
-          validationSchema={loginSchema}
-          onSubmit={(values) => onSubmit(values)}
-        >
-          {({ values }) => (
-            <FormikForm>
-              <Form.Group className="mb-3">
-                <Form.Label>Email</Form.Label>
-                <Field
-                  as={Form.Control}
-                  type="email"
-                  name="email"
-                  placeholder="Enter email"
-                />
-                <div className="text-danger">
-                  <ErrorMessage name="email" />
-                </div>
-              </Form.Group>
-              <Form.Group className="mb-3">
-                <Form.Label>Password</Form.Label>
-                <Field
-                  as={Form.Control}
-                  type="password"
-                  name="password"
-                  placeholder="Password"
-                />
-                <div className="text-danger">
-                  <ErrorMessage name="password" />
-                </div>
-              </Form.Group>
-              <Button
-                variant="primary"
-                type="submit"
-                disabled={!values.email || !values.password}
-              >
-                Submit
-              </Button>
-              <p className="login-switch" style={{ marginTop: 12 }}>
-                ¿No tenés cuenta? <button type="button" className="link-button" onClick={() => navigate('/register')}>Registrate</button>
-              </p>
+    <div className="login-page">
+      <div className="login-layout">
+        
+        {/* Columna Izquierda: Formulario */}
+        <Card className="login-card" style={{ width: "100%" }}>
+          <Card.Body>
+            <Formik
+              initialValues={{ email: "", password: "" }}
+              validationSchema={loginSchema}
+              onSubmit={(values) => onSubmit(values)}
+            >
+              {({ values }) => (
+                <FormikForm>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Email</Form.Label>
+                    <Field
+                      as={Form.Control}
+                      type="email"
+                      name="email"
+                      placeholder="Enter email"
+                    />
+                    <div className="text-danger">
+                      <ErrorMessage name="email" />
+                    </div>
+                  </Form.Group>
 
-              
-            </FormikForm>
-          )}
-        </Formik>
-      </Card.Body>
-    </Card>
+                  <Form.Group className="mb-3">
+                    <Form.Label>Password</Form.Label>
+                    <Field
+                      as={Form.Control}
+                      type="password"
+                      name="password"
+                      placeholder="Password"
+                    />
+                    <div className="text-danger">
+                      <ErrorMessage name="password" />
+                    </div>
+                  </Form.Group>
+
+                  <Button
+                    variant="primary"
+                    type="submit"
+                    disabled={!values.email || !values.password}
+                  >
+                    Ingresar
+                  </Button>
+                  
+                  <p className="login-switch" style={{ marginTop: 12 }}>
+                    ¿No tenés cuenta?{' '}
+                    <button
+                      type="button"
+                      className="link-button"
+                      onClick={() => navigate('/register')}
+                    >
+                      Registrate
+                    </button>
+                  </p>
+                </FormikForm>
+              )}
+            </Formik>
+          </Card.Body>
+        </Card>
+
+        {/* Columna Derecha: Texto Informativo */}
+        <div className="login-info-section">
+          <h1>¡Te damos la bienvenida de vuelta!</h1>
+          <p>
+            Ingresá a tu cuenta para gestionar tus películas favoritas.
+          </p>
+        </div>
+
+      </div>
+    </div>
   );
 };
 
