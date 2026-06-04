@@ -145,3 +145,16 @@ export const RegisterApi = async (username, email, password, role = "reviewer") 
     throw error;
   }
 };
+
+export const buscarPeliculasApi = async (text) => {
+    const response = await api.get(
+        `/movies/search?query=${encodeURIComponent(text)}`
+    );
+
+    const data = response?.data;
+    if (Array.isArray(data)) {
+        return data;
+    }
+
+    return data?.results || data?.movies || data?.data || [];
+};

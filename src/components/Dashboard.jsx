@@ -54,6 +54,9 @@ const Dashboard = () => {
         </button>
       </header>
       <nav className="mb-4">
+        <Link className="btn btn-link" to="/peliculasApi">
+          Api de Películas
+        </Link>
         <Link className="btn btn-link" to="/">
           Home
         </Link>

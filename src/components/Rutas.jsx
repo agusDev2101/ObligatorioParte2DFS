@@ -5,6 +5,7 @@ import Pagina404 from "./Pagina404.jsx";
 import Dashboard from "./Dashboard.jsx";
 import Login2 from "./Login2.jsx";
 import Register from "./Register.jsx";
+import BusquedaPeliculas from "./BusquedaPeliculas.jsx";
 const Rutas = () => {
   const isLoading = useSelector((state) => state.loadingSlice.count > 0);
 
@@ -15,9 +16,8 @@ const Rutas = () => {
       <Routes>
         <Route path="/login" element={<Login2 />} />
         <Route path="/register" element={<Register />} />  
-        <Route path="/" element={<Dashboard />}>
-          {/* <Route index element={<DALE />} /> */}
-        </Route>
+        <Route path="/" element={<Dashboard />} />
+        <Route path="/peliculasApi" element={<BusquedaPeliculas />} />
         <Route path="*" element={<Pagina404></Pagina404>}></Route>
       </Routes>
     </BrowserRouter>
