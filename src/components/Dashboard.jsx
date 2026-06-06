@@ -1,6 +1,7 @@
 import { Link, Outlet, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
+import ReviewsSection from "./ReviewsSection.jsx";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -65,8 +66,8 @@ const Dashboard = () => {
         </Link>
       </nav>
       <main>
-        <Outlet />
-      </main>
+  <ReviewsSection />
+</main>
     </div>
   );
 };

@@ -3,126 +3,69 @@ const URL_TYPICODE = import.meta.env.VITE_TYPICODE_URL;
 const URL_BASE = import.meta.env.VITE_API_URL;
 
 const api = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
+  baseURL: import.meta.env.VITE_API_URL,
 });
 
 api.interceptors.request.use((config) => {
-    const token = localStorage.getItem("token");
-    if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+  const token = localStorage.getItem("token");
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
 });
 
 api.interceptors.response.use(
-    (response) => response,
-    (error) => {
-        const customError = {
-            message:
-                error.response?.data?.message ||
-                error.message ||
-                "Error desconocido",
-            status:
-                error.response?.status || 500,
-            data:
-                error.response?.data || null,
-            originalError: error,
-        };
-        return Promise.reject(customError);
-    }
+  (response) => response,
+  (error) => {
+    const customError = {
+      message:
+        error.response?.data?.message || error.message || "Error desconocido",
+      status: error.response?.status || 500,
+      data: error.response?.data || null,
+      originalError: error,
+    };
+    return Promise.reject(customError);
+  },
 );
-
-
-export const obtenerTareasPaginadasApi = async (
-    page = 1,
-    limit = 10,
-    signal
-) => {
-    const response = await api.get(
-        `/todos?page=${page}&limit=${limit}`,
-        { signal }
-    );
-    return response?.data?.todos || [];
-};
-
-
-export const obtenerTareasApi = async (signal) => {
-    const response = await api.get("/todos", {
-        signal,
-    });
-    console.log('response.data', response.data);
-    return response?.data?.todos || [];
-};
-
-export const agregarTareaApi = async (tarea, signal) => {
-    const response = await api.post(
-        "/todos",
-        tarea,
-        { signal }
-    );
-    console.log("response.data", response.data);
-    return response.data;
-
-
-};
-
-export const eliminarTareaApi = async (id, signal) => {
-    const response = await api.delete(
-        `/todos/${id}`,
-        {
-            signal,
-        }
-    );
-    console.log('response.data', response.data);
-    return response.data;
-};
-
-
-export const editarTareaApi = async (id, data, signal) => {
-    const response = await api.patch(
-        `/todos/${id}`,
-        data,
-        {
-            signal,
-        }
-    );
-    console.log("response.data", response.data);
-    return response.data;
-};
 
 //obtener usuarios de la api de ayuda
 export const obtenerUsuariosApi = async () => {
-    return fetch(`${URL_TYPICODE}/users`)
-        .then(response => response.json())
-        .then(json => {
-            console.log('json', json);
-            return json
-        })
-}
-
-export const LoginApi = async (email, password) => {
-    try {
-        const response = await axios.post(
-            `${URL_BASE}/auth/login`,
-            {
-                email,
-                password
-            },
-            {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            }
-        );
-        console.log('json', response.data);
-        return response.data?.data?.token || response.data?.token;
-    } catch (error) {
-        console.error('Login error:', error.response?.data || error.message);
-        throw error;
-    }
+  return fetch(`${URL_TYPICODE}/users`)
+    .then((response) => response.json())
+    .then((json) => {
+      console.log("json", json);
+      return json;
+    });
 };
 
-export const RegisterApi = async (username, email, password, role = "reviewer") => {
+export const LoginApi = async (email, password) => {
+  try {
+    const response = await axios.post(
+      `${URL_BASE}/auth/login`,
+      {
+        email,
+        password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+    console.log("json", response.data);
+    return response.data?.data?.token || response.data?.token;
+  } catch (error) {
+    console.error("Login error:", error.response?.data || error.message);
+    throw error;
+  }
+};
+
+export const RegisterApi = async (
+  username,
+  email,
+  password,
+  role = "reviewer",
+) => {
   try {
     const response = await axios.post(
       `${URL_BASE}/auth/register`,
@@ -136,7 +79,7 @@ export const RegisterApi = async (username, email, password, role = "reviewer") 
         headers: {
           "Content-Type": "application/json",
         },
-      }
+      },
     );
 
     return response.data?.data;
@@ -144,4 +87,62 @@ export const RegisterApi = async (username, email, password, role = "reviewer") 
     console.error("Register error:", error.response?.data || error.message);
     throw error;
   }
+};
+
+//obtener reviews de la api y categorias de la api
+
+export const obtenerReviewsApi = async (signal) => {
+  const response = await api.get("/reviews", { signal });
+  return response.data?.reviews || [];
+};
+
+export const crearReviewApi = async (review, signal) => {
+  const formData = new FormData();
+
+  formData.append("movieTitle", review.movieTitle);
+  formData.append("rating", review.rating);
+  formData.append("comment", review.comment);
+  formData.append("categoryId", review.categoryId);
+
+  if (review.image) {
+    formData.append("image", review.image);
+  }
+
+  const response = await api.post("/reviews", formData, {
+    signal,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data?.review;
+};
+
+export const eliminarReviewApi = async (id, signal) => {
+  const response = await api.delete(`/reviews/${id}`, { signal });
+  return response.data;
+};
+
+export const editarReviewApi = async (id, review, signal) => {
+  const formData = new FormData();
+
+  if (review.movieTitle) formData.append("movieTitle", review.movieTitle);
+  if (review.rating) formData.append("rating", review.rating);
+  if (review.comment) formData.append("comment", review.comment);
+  if (review.categoryId) formData.append("categoryId", review.categoryId);
+  if (review.image) formData.append("image", review.image);
+
+  const response = await api.patch(`/reviews/${id}`, formData, {
+    signal,
+    headers: {
+      "Content-Type": "multipart/form-data",
+    },
+  });
+
+  return response.data?.review;
+};
+
+export const obtenerCategoriasApi = async (signal) => {
+  const response = await api.get("/categories", { signal });
+  return response.data?.categories || [];
 };
