@@ -16,10 +16,11 @@ const Rutas = () => {
 
       <Routes>
         <Route path="/login" element={<Login2 />} />
-        <Route path="/register" element={<Register />} />  
-        <Route path="/" element={<Dashboard />} />
-        <Route path="/peliculasApi" element={<BusquedaPeliculas />} />
-        <Route path= "/iaSinopsis" element={<GenerarSinopsis />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/" element={<Dashboard />}>
+          <Route path="/peliculasApi" element={<BusquedaPeliculas />} />
+          <Route path="/iaSinopsis" element={<GenerarSinopsis />} />
+        </Route>
         <Route path="*" element={<Pagina404></Pagina404>}></Route>
       </Routes>
     </BrowserRouter>

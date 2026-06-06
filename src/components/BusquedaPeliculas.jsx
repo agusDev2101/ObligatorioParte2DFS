@@ -1,10 +1,7 @@
 import { useState } from "react";
 import { buscarPeliculasApi } from "../services/services.js";
-import { useNavigate } from "react-router-dom";
-import { useEffect } from "react";
 
 const BusquedaPeliculas = () => {
-    const navigate = useNavigate();
     const [titulo, setTitulo] = useState("");
     const [peliculas, setPeliculas] = useState([]);
     const [error, setError] = useState("");
@@ -26,7 +23,7 @@ const BusquedaPeliculas = () => {
         try {
             const respuesta = await buscarPeliculasApi(termino);
 
-            setPeliculas(respuesta.slice(0, 3));
+            setPeliculas(respuesta.slice(0, 7));
             if (respuesta.length === 0) {
                 setError("No se encontraron resultados.");
             }
@@ -38,29 +35,9 @@ const BusquedaPeliculas = () => {
         }
     };
 
-    useEffect(() => {
-        const token = localStorage.getItem("token");
-
-        if (!token) {
-            navigate("/login", { replace: true });
-        }
-        
-    }, [navigate]);
-
-    const handleLogout = () => {
-        localStorage.removeItem("token");
-        navigate("/login", { replace: true });
-    };
-
     return (
 
         <div className="container py-4">
-            <header className="d-flex justify-content-between align-items-center mb-4">
-                <h1 className="h3">PelisApp</h1>
-                <button className="btn btn-outline-danger" onClick={handleLogout}>
-                    Logout
-                </button>
-            </header>
             <form onSubmit={handleSubmit} className="row g-2 mb-4">
                 <div className="col-12 col-md-9">
                     <input
