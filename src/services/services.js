@@ -146,3 +146,28 @@ export const obtenerCategoriasApi = async (signal) => {
   const response = await api.get("/categories", { signal });
   return response.data?.categories || [];
 };
+
+export const cambiarPlanApi = async (signal) => {
+  const response = await api.patch(
+    "/users/plan",
+    { plan: "premium" },
+    { signal },
+  );
+
+  return response.data?.data;
+};
+
+export const crearCategoriaApi = async (category, signal) => {
+  const response = await api.post("/categories", category, { signal });
+  return response.data?.category;
+};
+
+export const eliminarCategoriaApi = async (id, signal) => {
+  const response = await api.delete(`/categories/${id}`, { signal });
+  return response.data;
+};
+
+export const editarCategoriaApi = async (id, category, signal) => {
+  const response = await api.patch(`/categories/${id}`, category, { signal });
+  return response.data?.category;
+};

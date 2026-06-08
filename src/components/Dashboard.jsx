@@ -49,7 +49,7 @@ const Dashboard = () => {
   return (
     <div className="container py-4">
       <header className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3">MyApp</h1>
+        <h1 className="h3">Reseñas Peliculas</h1>
         <button className="btn btn-outline-danger" onClick={handleLogout}>
           Logout
         </button>
@@ -66,8 +66,8 @@ const Dashboard = () => {
         </Link>
       </nav>
       <main>
-  <ReviewsSection />
-</main>
+        <ReviewsSection />
+      </main>
     </div>
   );
 };
