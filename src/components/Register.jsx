@@ -1,7 +1,7 @@
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import Card from "react-bootstrap/Card";
-import { Link, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 
 import { Formik, Form as FormikForm, Field, ErrorMessage } from "formik";
@@ -22,6 +22,14 @@ const registerSchema = Yup.object({
   confirmPassword: Yup.string()
     .oneOf([Yup.ref("password")], "Las contraseñas no coinciden")
     .required("Repetir contraseña es obligatorio"),
+  role: Yup.string()
+    .oneOf(["reviewer", "admin"], "Seleccioná un rol válido")
+    .required("El rol es obligatorio"),
+  adminCode: Yup.string().when("role", {
+    is: "admin",
+    then: (schema) => schema.required("Código de verificación requerido para administradores"),
+    otherwise: (schema) => schema.notRequired(),
+  }),
 });
 
 const Register = () => {
@@ -32,9 +40,20 @@ const Register = () => {
   const onSubmit = async (values, { setStatus }) => {
     try {
       setStatus("");
+
+      if (values.role === "admin" && values.adminCode !== "ORT_SECRET_2026") {
+      setStatus("Código de administrador incorrecto.");
+      return;
+    }
+
       dispatch(startLoading());
 
-      const result = await RegisterApi(values.username, values.email, values.password);
+      const result = await RegisterApi(
+        values.username,
+        values.email,
+        values.password,
+        values.role,
+      );
 
       const token = result?.token || result?.data?.token;
       if (token) {
@@ -71,6 +90,7 @@ const Register = () => {
                 email: "",
                 password: "",
                 confirmPassword: "",
+                role: "reviewer",
               }}
               validationSchema={registerSchema}
               onSubmit={onSubmit}
@@ -131,16 +151,42 @@ const Register = () => {
                     </div>
                   </Form.Group>
 
+                  <Form.Group className="login-field mb-3">
+                    <Form.Label>Rol</Form.Label>
+                    <Field as={Form.Select} name="role">
+                      <option value="reviewer">Reviewer</option>
+                      <option value="admin">Admin</option>
+                    </Field>
+                    <div className="text-danger login-error">
+                      <ErrorMessage name="role" />
+                    </div>
+                  </Form.Group>
+
+                  {values.role === "admin" && (
+                    <Form.Group className="login-field mb-3">
+                      <Form.Label>Código de Invitación Admin</Form.Label>
+                      <Field
+                        as={Form.Control}
+                        type="password"
+                        name="adminCode"
+                        placeholder="Clave de sistema"
+                      />
+                      <div className="text-danger login-error">
+                        <ErrorMessage name="adminCode" />
+                      </div>
+                    </Form.Group>
+                  )}
+
                   <Button
                     className="login-button"
                     variant="primary"
                     type="submit"
-                    disabled={!values.username || !values.email || !values.password || !values.confirmPassword || !isValid || !dirty || isLoading}
+                    disabled={!values.username || !values.email || !values.password || !values.confirmPassword || !values.role || !isValid || !dirty || isLoading}
                   >
                     Crear cuenta
                   </Button>
 
-                   <p className="login-switch" style={{ marginTop: 12 }}>
+                  <p className="login-switch" style={{ marginTop: 12 }}>
                     ¿Ya tenés cuenta?{' '}
                     <button
                       type="button"

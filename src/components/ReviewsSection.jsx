@@ -79,7 +79,14 @@ const ReviewsSection = () => {
           setPlan(planDetectado);
         }
       } catch (error) {
-        if (error.name !== "CanceledError") {
+        const requestCanceled =
+          error.name === "CanceledError" ||
+          error.code === "ERR_CANCELED" ||
+          error.message?.toLowerCase() === "canceled" ||
+          error.originalError?.name === "CanceledError" ||
+          error.originalError?.code === "ERR_CANCELED";
+
+        if (!requestCanceled) {
           setError(error.message || "Error al cargar datos");
         }
       }

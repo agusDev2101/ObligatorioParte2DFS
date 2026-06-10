@@ -17,26 +17,26 @@ api.interceptors.request.use((config) => {
 api.interceptors.response.use(
   (response) => response,
   (error) => {
+    const status = error.response?.status;
+
+    if (status === 401) {
+      localStorage.removeItem("token");
+      const publicPaths = ["/login", "/register"];
+      if (!publicPaths.includes(window.location.pathname)) {
+        window.location.assign("/login");
+      }
+    }
+
     const customError = {
       message:
         error.response?.data?.message || error.message || "Error desconocido",
-      status: error.response?.status || 500,
+      status: status || 500,
       data: error.response?.data || null,
       originalError: error,
     };
     return Promise.reject(customError);
   },
 );
-
-//obtener usuarios de la api de ayuda
-export const obtenerUsuariosApi = async () => {
-  return fetch(`${URL_TYPICODE}/users`)
-    .then((response) => response.json())
-    .then((json) => {
-      console.log("json", json);
-      return json;
-    });
-};
 
 export const LoginApi = async (email, password) => {
   try {
@@ -52,10 +52,8 @@ export const LoginApi = async (email, password) => {
         },
       },
     );
-    console.log("json", response.data);
     return response.data?.data?.token || response.data?.token;
   } catch (error) {
-    console.error("Login error:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -84,7 +82,6 @@ export const RegisterApi = async (
 
     return response.data?.data;
   } catch (error) {
-    console.error("Register error:", error.response?.data || error.message);
     throw error;
   }
 };
@@ -96,6 +93,7 @@ export const buscarPeliculasApi = async (text) => {
 
     const data = response.data;
 
+    if (Array.isArray(data)) return data;
     return data?.results || data?.movies || data?.data || [];
 };
 
@@ -113,9 +111,9 @@ export const generarSinopsisApi = async (text) => {
       }
     );
 
-    return response.data?.data;
+    const data = response.data?.data ?? response.data;
+    return typeof data === "string" ? data : data?.text || data?.sinopsis || "";
   } catch (error) {
-    console.error("Generate synopsis error:", error.response?.data || error.message);
     throw error;
   }
 }

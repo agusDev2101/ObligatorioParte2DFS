@@ -19,7 +19,7 @@ const loginSchema = Yup.object({
     .required("La contraseña es obligatoria"),
 });
 
-const Login2 = () => {
+const Login = () => {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
@@ -29,17 +29,16 @@ const Login2 = () => {
     return error?.response?.data?.message || error?.message || "Error en el login";
   };
 
-  const onSubmit = async (values) => {
-    console.log(values);
+  const onSubmit = async (values, { setStatus }) => {
     try {
+      setStatus("");
       dispatch(startLoading());
-      await new Promise((resolve) => setTimeout(resolve, 3000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       const token = await LoginApi(values.email, values.password);
-      console.log("token", token);
       localStorage.setItem("token", token);
       navigate("/");
     } catch (error) {
-      alert(getLoginErrorMessage(error));
+      setStatus(getLoginErrorMessage(error));
     } finally {
       dispatch(stopLoading());
     }
@@ -48,17 +47,17 @@ const Login2 = () => {
   return (
     <div className="login-page">
       <div className="login-layout">
-        
-        {/* Columna Izquierda: Formulario */}
         <Card className="login-card" style={{ width: "100%" }}>
           <Card.Body>
             <Formik
               initialValues={{ email: "", password: "" }}
               validationSchema={loginSchema}
-              onSubmit={(values) => onSubmit(values)}
+              onSubmit={onSubmit}
             >
-              {({ values }) => (
+              {({ values, status }) => (
                 <FormikForm>
+                  {status ? <div className="login-alert">{status}</div> : null}
+
                   <Form.Group className="mb-3">
                     <Form.Label>Email</Form.Label>
                     <Field
@@ -92,13 +91,13 @@ const Login2 = () => {
                   >
                     Ingresar
                   </Button>
-                  
+
                   <p className="login-switch" style={{ marginTop: 12 }}>
-                    ¿No tenés cuenta?{' '}
+                    ¿No tenés cuenta?{" "}
                     <button
                       type="button"
                       className="link-button"
-                      onClick={() => navigate('/register')}
+                      onClick={() => navigate("/register")}
                     >
                       Registrate
                     </button>
@@ -109,17 +108,13 @@ const Login2 = () => {
           </Card.Body>
         </Card>
 
-        {/* Columna Derecha: Texto Informativo */}
         <div className="login-info-section">
           <h1>¡Te damos la bienvenida de vuelta!</h1>
-          <p>
-            Ingresá a tu cuenta para gestionar tus películas favoritas.
-          </p>
+          <p>Ingresá a tu cuenta para gestionar tus películas favoritas.</p>
         </div>
-
       </div>
     </div>
   );
 };
 
-export default Login2;
+export default Login;

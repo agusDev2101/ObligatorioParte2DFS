@@ -1,7 +1,6 @@
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useEffect, useState } from "react";
-import ReviewsSection from "./ReviewsSection.jsx";
 
 const Dashboard = () => {
   const navigate = useNavigate();
@@ -49,7 +48,7 @@ const Dashboard = () => {
   return (
     <div className="container py-4">
       <header className="d-flex justify-content-between align-items-center mb-4">
-        <h1 className="h3">MyApp</h1>
+        <h1 className="h3">PelisApp</h1>
         <button className="btn btn-outline-danger" onClick={handleLogout}>
           Logout
         </button>
@@ -61,22 +60,6 @@ const Dashboard = () => {
           onClick={() => navigate('/')}
         >
           Home
-        </button>
-
-        <button
-          type="button"
-          className="nav-item-modern"
-          onClick={() => navigate('/tareas')}
-        >
-          Tareas
-        </button>
-
-        <button
-          type="button"
-          className="nav-item-modern"
-          onClick={() => navigate('/tareas/nueva')}
-        >
-          Nueva tarea
         </button>
 
         <button
@@ -96,7 +79,7 @@ const Dashboard = () => {
         </button>
       </nav>
       <main>
-        <ReviewsSection />
+        <Outlet />
       </main>
     </div>
   );
