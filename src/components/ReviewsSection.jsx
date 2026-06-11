@@ -19,15 +19,9 @@ import {
 import { cargarCategorias } from "../redux/features/categoriesSlice.js";
 
 import CategoriesSection from "./CategoriesSection.jsx";
-
-import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-} from "recharts";
+import GraficoReviews from "./GraficoReviews.jsx";
+import FiltrosReviews from "./FiltrosReviews.jsx";
+import PanelPlan from "./PanelPlan.jsx";
 
 import { jwtDecode } from "jwt-decode";
 
@@ -35,6 +29,7 @@ const ReviewsSection = () => {
   const reviews = useSelector((state) => state.reviewsSlice.reviews);
   const categories = useSelector((state) => state.categoriesSlice.categories);
   const dispatch = useDispatch();
+
   const [error, setError] = useState("");
   const [mensaje, setMensaje] = useState("");
   const [creando, setCreando] = useState(false);
@@ -68,6 +63,7 @@ const ReviewsSection = () => {
         const reviewsDelUsuario = reviewsData.filter(
           (review) => review.userId?._id === usuarioId,
         );
+
         setRolUsuario(obtenerRolUsuario());
         dispatch(cargarReviews(reviewsDelUsuario));
         dispatch(cargarCategorias(categoriesData));
@@ -95,7 +91,7 @@ const ReviewsSection = () => {
     cargarDatos();
 
     return () => controller.abort();
-  }, []);
+  }, [dispatch]);
 
   const obtenerUsuarioLogueadoId = () => {
     const token = localStorage.getItem("token");
@@ -153,12 +149,12 @@ const ReviewsSection = () => {
       await eliminarReviewApi(id);
 
       dispatch(eliminarReview(id));
-
       setMensaje("Reseña eliminada correctamente.");
     } catch (error) {
       setError(error.message || "Error al eliminar");
     }
   };
+
   const handleChange = (e) => {
     const { name, value, files } = e.target;
 
@@ -190,6 +186,7 @@ const ReviewsSection = () => {
 
     try {
       setCreando(true);
+
       if (reviewEditando) {
         const reviewActualizada = await editarReviewApi(
           reviewEditando.id,
@@ -209,7 +206,7 @@ const ReviewsSection = () => {
         setMensaje("Reseña creada correctamente.");
       }
     } catch (error) {
-      setError(error.message || "Error al crear la reseña");
+      setError(error.message || "Error al guardar la reseña");
     } finally {
       setCreando(false);
     }
@@ -245,6 +242,7 @@ const ReviewsSection = () => {
 
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
+
   return (
     <section>
       <h2 className="mb-3">Reseñas</h2>
@@ -257,6 +255,7 @@ const ReviewsSection = () => {
           <h3 className="h5 mb-3">
             {reviewEditando ? "Editar reseña" : "Agregar nueva reseña"}
           </h3>
+
           <form onSubmit={handleSubmit}>
             <div className="row g-3">
               <div className="col-md-6">
@@ -340,6 +339,7 @@ const ReviewsSection = () => {
                       ? "Guardar cambios"
                       : "Crear reseña"}
                 </button>
+
                 {reviewEditando && (
                   <button
                     className="btn btn-outline-secondary ms-2"
@@ -358,114 +358,22 @@ const ReviewsSection = () => {
         </div>
       </div>
 
-      <div className="card mb-4">
-        <div className="card-body">
-          <h3 className="h5 mb-3">Reviews por categoría</h3>
+      <GraficoReviews reviewsPorCategoria={reviewsPorCategoria} />
 
-          <div style={{ width: "100%", height: 300 }}>
-            <ResponsiveContainer>
-              <BarChart data={reviewsPorCategoria}>
-                <XAxis dataKey="name" />
-                <YAxis allowDecimals={false} />
-                <Tooltip />
-                <Bar dataKey="cantidad" />
-              </BarChart>
-            </ResponsiveContainer>
-          </div>
-        </div>
-      </div>
+      <FiltrosReviews
+        filtroTitulo={filtroTitulo}
+        setFiltroTitulo={setFiltroTitulo}
+        filtroCategoria={filtroCategoria}
+        setFiltroCategoria={setFiltroCategoria}
+        categories={categories}
+      />
 
-      <div className="card mb-4">
-        <div className="card-body">
-          <h3 className="h5 mb-3">Filtros</h3>
-
-          <div className="row g-3">
-            <div className="col-md-6">
-              <label className="form-label">Buscar por película</label>
-              <input
-                type="text"
-                className="form-control"
-                value={filtroTitulo}
-                onChange={(e) => setFiltroTitulo(e.target.value)}
-                placeholder="Ej: John Wick"
-              />
-            </div>
-
-            <div className="col-md-4">
-              <label className="form-label">Filtrar por categoría</label>
-              <select
-                className="form-select"
-                value={filtroCategoria}
-                onChange={(e) => setFiltroCategoria(e.target.value)}
-              >
-                <option value="">Todas</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>
-                    {category.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="col-md-2 d-flex align-items-end">
-              <button
-                className="btn btn-outline-secondary w-100"
-                type="button"
-                onClick={() => {
-                  setFiltroTitulo("");
-                  setFiltroCategoria("");
-                }}
-              >
-                Limpiar
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <div className="card mb-4">
-        <div className="card-body">
-          <h3 className="h5 mb-3">Plan de usuario</h3>
-
-          <p className="mb-1">
-            <strong>Plan actual:</strong> {plan}
-          </p>
-
-          {plan === "plus" ? (
-            <>
-              <p className="mb-2">
-                <strong>Uso:</strong> {reviews.length} / 4 reviews creadas
-              </p>
-
-              <div className="progress mb-3">
-                <div
-                  className="progress-bar"
-                  role="progressbar"
-                  style={{
-                    width: `${Math.min((reviews.length / 4) * 100, 100)}%`,
-                  }}
-                >
-                  {Math.min(Math.round((reviews.length / 4) * 100), 100)}%
-                </div>
-              </div>
-
-              <button
-                className="btn btn-warning"
-                type="button"
-                onClick={handleCambiarPlan}
-                disabled={actualizandoPlan}
-              >
-                {actualizandoPlan ? "Actualizando..." : "Cambiar a Premium"}
-              </button>
-            </>
-          ) : (
-            <p className="mb-0">
-              <strong>Uso:</strong> {reviews.length} reviews creadas. Tu plan es
-              ilimitado.
-            </p>
-          )}
-        </div>
-      </div>
+      <PanelPlan
+        plan={plan}
+        reviewsCantidad={reviews.length}
+        actualizandoPlan={actualizandoPlan}
+        handleCambiarPlan={handleCambiarPlan}
+      />
 
       {rolUsuario === "admin" && <CategoriesSection />}
 
@@ -504,12 +412,14 @@ const ReviewsSection = () => {
                     Usuario: {review.userId?.username || "Desconocido"}
                   </p>
                 </div>
+
                 <button
                   className="btn btn-outline-primary btn-sm mt-2 me-2"
                   onClick={() => handleEditarClick(review)}
                 >
                   Editar
                 </button>
+
                 <button
                   className="btn btn-danger btn-sm mt-2"
                   onClick={() => handleDelete(review.id)}
