@@ -65,15 +65,9 @@ const ReviewsSection = () => {
         );
 
         setRolUsuario(obtenerRolUsuario());
+        setPlan(obtenerPlanUsuario());
         dispatch(cargarReviews(reviewsDelUsuario));
         dispatch(cargarCategorias(categoriesData));
-
-        const planDetectado = reviewsData.find((review) => review.userId?.plan)
-          ?.userId?.plan;
-
-        if (planDetectado) {
-          setPlan(planDetectado);
-        }
       } catch (error) {
         const requestCanceled =
           error.name === "CanceledError" ||
@@ -109,6 +103,17 @@ const ReviewsSection = () => {
     const decoded = jwtDecode(token);
 
     return decoded.role;
+  };
+
+  const obtenerPlanUsuario = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return "plus";
+
+    const decoded = jwtDecode(token);
+
+    console.log("TOKEN DECODIFICADO:", decoded);
+
+    return decoded.plan || "plus";
   };
 
   const obtenerNombreCategoria = (categoryId) => {
